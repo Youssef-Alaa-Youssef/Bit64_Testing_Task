@@ -1,7 +1,7 @@
 from pathlib import Path
 import os
 import dotenv
-
+import dj_database_url
 dotenv.load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -69,6 +69,9 @@ DATABASES = {
     }
 }
 
+DATABASES = {
+'default': dj_database_url.parse('postgres://productiondatabase_4thi_user:OfI1IRLRQdRY91MMEygssweNyuxNU2gC@dpg-cgqvpvd269v4iouv20lg-a.ohio-postgres.render.com/productiondatabase_4thi')
+}
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
