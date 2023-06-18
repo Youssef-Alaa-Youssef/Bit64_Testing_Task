@@ -20,4 +20,4 @@ __pycache__/
 
 .deploy/
 
-.env
+.env/
