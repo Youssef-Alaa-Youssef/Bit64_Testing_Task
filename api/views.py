@@ -7,16 +7,39 @@ from django.contrib.auth import authenticate, login
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q
 from .models import Product,CartItem,Cart
-from .serializers import ProductSerializer,CartItemSerializer
+from .serializers import ProductSerializer,CartItemSerializer,CartSerializer
+from rest_framework.views import APIView
+from rest_framework import generics, permissions
 
 @api_view(['POST'])
-@throttle_classes([UserRateThrottle])
 def register(request):
     serializer = UserSerializer(data=request.data)
     if serializer.is_valid():
         user = serializer.save()
         return Response({'message': 'User registered successfully.'}, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from .serializers import UserSerializer
+class UserRegistrationView(APIView):
+    throttle_classes = [UserRateThrottle]
+
+    def post(self, request, format=None):
+        serializer = UserSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        return Response({'message': 'User registered successfully'})
+    
+class UserProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+    throttle_classes = [UserRateThrottle]
+
+    def get(self, request, format=None):
+        serializer = UserSerializer(request.user)
+        return Response(serializer.data)
 
 @api_view(['POST'])
 @csrf_exempt
@@ -98,3 +121,34 @@ def create_order(request):
         return Response({'message': 'Order created successfully.', 'order_id': order.id}, status=201)
 
     return Response(serializer.errors, status=400)
+
+
+
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def view_cart(request):
+    cart = request.user.cart  
+    cart_items = cart.cartitem_set.all()  # Assuming you have a ForeignKey relationship between Cart and CartItem models
+
+    context = {
+        'cart': cart,
+        'cart_items': cart_items,
+    }
+    return render(request, 'cart/view.html', context)
+
+
+class CartView(APIView):
+    def get(self, request):
+        cart = Cart.objects.filter(user=request.user).first()
+        serializer = CartSerializer(cart)
+        return Response(serializer.data)
+    
+class OrderListView(generics.ListAPIView):
+    serializer_class = OrderSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        return Order.objects.filter(user=user)

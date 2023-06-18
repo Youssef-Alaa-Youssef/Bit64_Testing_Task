@@ -30,3 +30,27 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = ['id', 'user', 'products', 'created_at']
+
+class CartItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CartItem
+        fields = ['product', 'quantity']
+
+class CartSerializer(serializers.ModelSerializer):
+    cart_items = CartItemSerializer(many=True)
+
+    class Meta:
+        model = Cart
+        fields = ['id', 'user', 'cart_items']
+
+    def create(self, validated_data):
+        cart_items_data = validated_data.pop('cart_items')
+        cart = Cart.objects.create(**validated_data)
+        for cart_item_data in cart_items_data:
+            CartItem.objects.create(cart=cart, **cart_item_data)
+        return cart
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['username', 'password']
