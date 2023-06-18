@@ -8,9 +8,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv('SECRET_KEY')
 
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 
@@ -58,19 +58,19 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'ecommerce.wsgi.application'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DATABASE_NAME'),
-        'USER': os.getenv('DATABASE_USER'),
-        'PASSWORD': os.getenv('DATABASE_PASSWORD'),
-        'HOST': os.getenv('DATABASE_HOST'),
-        'PORT': os.getenv('DATABASE_PORT'),
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': os.getenv('DATABASE_NAME'),
+#         'USER': os.getenv('DATABASE_USER'),
+#         'PASSWORD': os.getenv('DATABASE_PASSWORD'),
+#         'HOST': os.getenv('DATABASE_HOST'),
+#         'PORT': os.getenv('DATABASE_PORT'),
+#     }
+# }
 
 DATABASES = {
-'default': dj_database_url.parse('postgres://productiondatabase_4thi_user:OfI1IRLRQdRY91MMEygssweNyuxNU2gC@dpg-cgqvpvd269v4iouv20lg-a.ohio-postgres.render.com/productiondatabase_4thi')
+'default': dj_database_url.parse('postgres://bit64_user:ASmTmYKoP5eAzxR9J3YfD1Hqo7daId23@dpg-ci7c13h8g3nfuce1gi9g-a.oregon-postgres.render.com/bit64')
 }
 AUTH_PASSWORD_VALIDATORS = [
     {
