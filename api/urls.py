@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import register,login_view,product_list,add_to_cart,Cart_Item,create_order,CartView,OrderListView,UserRegistrationView
+from .views import register, login_view, product_list, add_to_cart, Cart_Item, create_order, CartView, OrderListView, UserRegistrationView
 
 urlpatterns = [
     path('register/', register, name='register'),

@@ -12,8 +12,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-
-
 INSTALLED_APPS = [
     'jazzmin',
     'django.contrib.admin',
@@ -59,20 +57,10 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'ecommerce.wsgi.application'
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': os.getenv('DATABASE_NAME'),
-#         'USER': os.getenv('DATABASE_USER'),
-#         'PASSWORD': os.getenv('DATABASE_PASSWORD'),
-#         'HOST': os.getenv('DATABASE_HOST'),
-#         'PORT': os.getenv('DATABASE_PORT'),
-#     }
-# }
-
 DATABASES = {
-'default': dj_database_url.parse('postgres://bit64_user:ASmTmYKoP5eAzxR9J3YfD1Hqo7daId23@dpg-ci7c13h8g3nfuce1gi9g-a.oregon-postgres.render.com/bit64')
+    'default': dj_database_url.parse('postgres://bit64_user:ASmTmYKoP5eAzxR9J3YfD1Hqo7daId23@dpg-ci7c13h8g3nfuce1gi9g-a.oregon-postgres.render.com/bit64')
 }
+
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -99,21 +87,18 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
 }
+
 SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('JWT',),
 }
+
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 
-
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
-
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')

@@ -1,10 +1,10 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
 from .models import UserProfile
-from .views import UserRegistrationView
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
+
 
 class UserProfileModelTestCase(TestCase):
     def setUp(self):
@@ -26,16 +26,15 @@ class UserProfileModelTestCase(TestCase):
         with self.assertRaises(UserProfile.DoesNotExist):
             UserProfile.objects.get(user=self.user)
 
+
 class MyAPITestCase(APITestCase):
+    """Test case for My API view"""
     def test_my_view(self):
-        url = reverse('UserRegistrationView') 
+        url = reverse('UserRegistrationView')
 
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-
-        expected_data = {'username': 'admin','password':'admin'}
+        expected_data = {'username': 'admin', 'password': 'admin'}
         self.assertEqual(response.data, expected_data)
-
-

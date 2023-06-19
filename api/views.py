@@ -1,38 +1,41 @@
 from rest_framework import status
 from rest_framework.decorators import api_view, throttle_classes
 from rest_framework.response import Response
-from .serializers import UserSerializer
+from .serializers import UserSerializer, OrderSerializer
 from rest_framework.throttling import UserRateThrottle
 from django.contrib.auth import authenticate, login
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q
-from .models import Product,CartItem,Cart
-from .serializers import ProductSerializer,CartItemSerializer,CartSerializer
+from .models import Product, CartItem, Cart
+from .serializers import ProductSerializer, CartItemSerializer, CartSerializer, Order
 from rest_framework.views import APIView
 from rest_framework import generics, permissions
+from rest_framework.permissions import IsAuthenticated
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+
+
+# create a view that allows users to register
 
 @api_view(['POST'])
 def register(request):
     serializer = UserSerializer(data=request.data)
     if serializer.is_valid():
-        user = serializer.save()
+        serializer.save()
         return Response({'message': 'User registered successfully.'}, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from .serializers import UserSerializer
 class UserRegistrationView(APIView):
     throttle_classes = [UserRateThrottle]
 
     def post(self, request, format=None):
         serializer = UserSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = serializer.save()
+        serializer.save()
         return Response({'message': 'User registered successfully'})
-    
+
+
 class UserProfileView(APIView):
     permission_classes = [IsAuthenticated]
     throttle_classes = [UserRateThrottle]
@@ -40,6 +43,9 @@ class UserProfileView(APIView):
     def get(self, request, format=None):
         serializer = UserSerializer(request.user)
         return Response(serializer.data)
+
+
+# create a view that allows users to login
 
 @api_view(['POST'])
 @csrf_exempt
@@ -57,6 +63,7 @@ def login_view(request):
         return Response({'message': 'Invalid credentials.'}, status=status.HTTP_401_UNAUTHORIZED)
 
 
+# create a view that displays a list of all the products, ordered by price, and with the ability to search by name
 
 @api_view(['GET'])
 def product_list(request):
@@ -70,6 +77,7 @@ def product_list(request):
     return Response(serializer.data)
 
 
+# create a view that allows users to add products to their cart
 
 @api_view(['POST'])
 def add_to_cart(request):
@@ -95,6 +103,9 @@ def add_to_cart(request):
 
     return Response({'message': 'Product added to the cart successfully.'}, status=201)
 
+
+# create a view that allows users to view their cart
+
 @api_view(['GET'])
 def Cart_Item(request):
     queryset = CartItem.objects.all()
@@ -102,10 +113,7 @@ def Cart_Item(request):
     return Response(serializer.data)
 
 
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from .models import Order
-from .serializers import OrderSerializer
+# create a view that allows users to create an order with the products in their cart
 
 @api_view(['POST'])
 def create_order(request):
@@ -117,20 +125,17 @@ def create_order(request):
     serializer = OrderSerializer(data=request.data)
     if serializer.is_valid():
         order = serializer.save(user=request.user, products=cart.products.all())
-        cart.products.clear()  
+        cart.products.clear()
         return Response({'message': 'Order created successfully.', 'order_id': order.id}, status=201)
 
     return Response(serializer.errors, status=400)
 
 
-
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
-
 @login_required
+@api_view(['GET'])
 def view_cart(request):
-    cart = request.user.cart  
-    cart_items = cart.cartitem_set.all()  # Assuming you have a ForeignKey relationship between Cart and CartItem models
+    cart = request.user.cart
+    cart_items = cart.cartitem_set.all()
 
     context = {
         'cart': cart,
@@ -144,7 +149,8 @@ class CartView(APIView):
         cart = Cart.objects.filter(user=request.user).first()
         serializer = CartSerializer(cart)
         return Response(serializer.data)
-    
+
+
 class OrderListView(generics.ListAPIView):
     serializer_class = OrderSerializer
     permission_classes = [permissions.IsAuthenticated]
