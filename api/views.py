@@ -152,5 +152,3 @@ class OrderListView(generics.ListAPIView):
     def get_queryset(self):
         user = self.request.user
         return Order.objects.filter(user=user)
-    
-
