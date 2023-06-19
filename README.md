@@ -22,11 +22,11 @@
 
  - Clone the repository ```git clone https://github.com/your_username/ecommerce.git``` 
  - Navigate to the project directory: ```cd ecommerce``` 
- - Create and activate a virtual environment (optional, but recommended)```python3 -m venv venv  source venv/bin/activate```
+ - Create and activate a virtual environment (optional, but recommended) ```python3 -m venv venv  source venv/bin/activate```
  - Install the project dependencies: ```pip install -r requirements.txt``` 
  - Set up the database: If using PostgreSQL, create a new database and update the database settings in **settings.py**:
  - Apply database migrations :  ```python manage.py migrate``` 
- - Create a superuser for admin access:```python manage.py createsuperuser```
+ - Create a superuser for admin access: ```python manage.py createsuperuser```
  - Start the development server: ```python manage.py runserver``` 
 
 ## Usage
